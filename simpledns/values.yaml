@@ -1,0 +1,63 @@
+# Default values for simpledns.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: sameersbn/bind
+  tag: 9.11.3-20190706
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+services:
+  - name: dns 
+    portname: dns-http
+    type: LoadBalancer
+    port: 53
+  - name: webmin
+    portname: webmin-http
+    type: LoadBalancer
+    port: 10000
+
+args: [
+  "--name=bind",  
+  "--dns=127.0.0.1",
+  "--publish=0.0.0.0:53:53",
+  "--publish=0.0.0.0:10000:10000",
+  "--volume=/srv/docker/bind:/data",
+  "--env=ROOT_PASSWORD=swisslog"
+]
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  paths: []
+  hosts:
+    - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {"kubernetes.io/os": "linux"}
+
+tolerations: []
+
+affinity: {}

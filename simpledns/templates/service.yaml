@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/name: {{ $.Chart.Name }}
+  name: bind-dns
+spec:
+  ports:
+  - name: "53-udp"
+    port: 53
+    protocol: UDP
+    targetPort: 53
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: {{ $.Chart.Name }}
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: bind
+  name: bind-webmin
+spec:
+  ports:
+  - name: "10000"
+    port: 10000
+    targetPort: 10000
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: {{ $.Chart.Name }}
+status:
+  loadBalancer: {}
